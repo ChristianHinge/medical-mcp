@@ -1,0 +1,88 @@
+{
+  "MonaiDeployAuthentication": {
+    "BypassAuthentication": true
+  },
+  "WorkloadManagerDatabase": {
+    "ConnectionString": "mongodb://root:rootpassword@mongodb:27017",
+    "DatabaseName": "WorkloadManager"
+  },
+  "WorkflowManager": {
+    "taskTimeoutMinutes": 60,
+    "endpointSettings": {
+      "defaultPageSize": 10,
+      "maxPageSize": 1000000
+    },
+    "TaskManager": {
+      "concurrency": 1,
+      "plug-ins": {
+        "docker": "Monai.Deploy.WorkflowManager.TaskManager.Docker.DockerPlugin, Monai.Deploy.WorkflowManager.TaskManager.Docker"
+      },
+      "meta-data": {
+      }
+    },
+    "messaging": {
+      "retries": {
+        "retryDelays": "5"
+      },
+      "topics": {
+        "workflowRequest": "md.workflow.request",
+        "exportComplete": "md.export.complete",
+        "exportRequestPrefix": "md.export.request",
+        "taskCallback": "md.tasks.callback",
+        "exportHl7": "md.export.hl7"
+      },
+      "dicomAgents": {
+        "dicomWebAgentName": "monaidicomweb",
+        "scuAgentName": "monaiscu"
+      },
+      "publisherServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessagePublisherService, Monai.Deploy.Messaging.RabbitMQ",
+      "publisherSettings": {
+        "endpoint": "rabbitmq",
+        "username": "admin",
+        "password": "admin",
+        "virtualHost": "monaideploy",
+        "exchange": "monaideploy",
+        "deadLetterExchange": "deadLetterExchange",
+        "deliveryLimit": "3",
+        "requeueDelay": "0"
+      },
+      "subscriberServiceAssemblyName": "Monai.Deploy.Messaging.RabbitMQ.RabbitMQMessageSubscriberService, Monai.Deploy.Messaging.RabbitMQ",
+      "subscriberSettings": {
+        "endpoint": "rabbitmq",
+        "username": "admin",
+        "password": "admin",
+        "virtualHost": "monaideploy",
+        "exchange": "monaideploy",
+        "deadLetterExchange": "monaideploy-dead-letter",
+        "exportRequestQueue": "export_tasks",
+        "deliveryLimit": 3,
+        "requeueDelay": 3,
+        "prefetchCount": 5
+      }
+    },
+    "storage": {
+      "serviceAssemblyName": "Monai.Deploy.Storage.MinIO.MinIoStorageService, Monai.Deploy.Storage.MinIO",
+      "settings": {
+        "endpoint": "minio:9000",
+        "accessKey": "minioadmin",
+        "accessToken": "minioadmin",
+        "region": "eu-west-2",
+        "bucket": "monaideploy",
+        "securedConnection": false,
+        "executableLocation": "mc",
+        "serviceName": "test"
+      }
+    }
+  },
+  "Kestrel": {
+    "EndPoints": {
+      "Http": {
+        "Url": "http://+:5002"
+      }
+    },
+    "LogHttpRequestQuery": false,
+    "LogHttpRequestBody": false,
+    "LogHttpResponseBody": true
+  },
+  "AllowedHosts": "*"
+}

@@ -1,0 +1,2 @@
+monai-deploy-app-sdk
+pydicom
