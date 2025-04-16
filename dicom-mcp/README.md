@@ -1,0 +1,1 @@
+uvx mcpo --port 8000 -- dicom-mcp /home/hinge/Projects/medical-mcp/dicom-mcp/config.yaml

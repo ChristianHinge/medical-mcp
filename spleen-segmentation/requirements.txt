@@ -1,2 +1,4 @@
-monai-deploy-app-sdk
+monai-deploy-app-sdk==2.0.0
+holoscan
+holoscan-cli<3.0.0
 pydicom

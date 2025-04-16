@@ -36,13 +36,22 @@
     "DicomModalities": {
       "MONAI-DEPLOY": [
         "MONAI-DEPLOY",
-        "172.29.0.1", // Change the ip address to monai-deploy server ip (if it is not localhost)
+        "172.240.1.1", // Change the ip address to monai-deploy server ip (if it is not localhost)
         104
-      ]
+      ],
+      "MCPSCU": {
+        "AET": "MCPSCU",
+        "Host": "172.240.1.1", 
+        "Port": 8000
+      }
     },
     "DicomModalitiesInDatabase": false,
     "DicomAlwaysAllowEcho": true,
     "DicomAlwaysAllowStore": true,
+    "DicomAlwaysAllowFind": true,
+    "DicomAlwaysAllowFindWorklist": true,
+    "DicomAlwaysAllowGet": true,
+    "DicomAlwaysAllowMove": true,
     "DicomCheckModalityHost": false,
     "DicomScuTimeout": 10,
     "OrthancPeers": {},
