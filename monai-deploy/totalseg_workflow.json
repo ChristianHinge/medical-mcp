@@ -1,7 +1,7 @@
 {
-	"name": "ai-liver-seg",
+	"name": "ai-total-seg",
 	"version": "1.0.0",
-	"description": "AI Liver Segmentation",
+	"description": "AI Totalsegmentator",
 	"informatics_gateway": {
 		"ae_title": "MONAI-DEPLOY",
 		"data_origins": [
@@ -18,49 +18,50 @@
 			"type": "router",
 			"task_destinations": [
 				{
-					"name": "liver",
-					"conditions": ["{{ context.dicom.series.any('0008','103E')}} == 'CT series for liver tumor from nii 014'"]
+					"name": "totalseg",
+					"conditions": ["{{ context.dicom.series.any('0008','0060')}} == 'CT'"]
 				}
 			]
 		},
 		{
-			"id": "liver",
-			"description": "Execute Liver Segmentation MAP",
+			"id": "totalseg",
+			"description": "Execute TotalSegmentator MAP",
 			"type": "docker",
 			"args": {
-				"container_image": "ghcr.io/mmelqin/monai_ai_livertumor_seg_app:1.0",
+				"container_image": "christianhinge/totalsegmentator_map:latest",
 				"server_url": "unix:///var/run/docker.sock",
 				"entrypoint": "/bin/bash,-c",
-				"command": "python3 -u /opt/monai/app/app.py",
+				"command": "python3 -u /opt/holoscan/app/app.py",
+				"user": "1000:1000",
 				"task_timeout_minutes": "5",
 				"temp_storage_container_path": "/var/lib/mde/",
-				"env_MONAI_INPUTPATH": "/var/monai/input/",
-				"env_MONAI_OUTPUTPATH": "/var/monai/output/",
-				"env_MONAI_MODELPATH": "/opt/monai/models/",
-				"env_MONAI_WORKDIR": "/var/monai/"
+				"env_HOLOSCAN_INPUTPATH": "/var/holoscan/input/",
+				"env_HOLOSCAN_OUTPUTPATH": "/var/holoscan/output/",
+				"env_HOLOSCAN_MODELPATH": "/opt/holoscan/models/",
+				"env_HOLOSCAN_WORKDIR": "/var/holoscan/"
 			},
 			"artifacts": {
 				"input": [
 					{
-						"name": "env_MONAI_INPUTPATH",
+						"name": "env_HOLOSCAN_INPUTPATH",
 						"value": "{{ context.input.dicom }}"
 					}
 				],
 				"output": [
 					{
-						"name": "env_MONAI_OUTPUTPATH",
+						"name": "env_HOLOSCAN_OUTPUTPATH",
 						"mandatory": true
 					}
 				]
 			},
 			"task_destinations": [
 				{
-					"name": "export-liver-seg"
+					"name": "export-organ-seg"
 				}
 			]
 		},
 		{
-			"id": "export-liver-seg",
+			"id": "export-organ-seg",
 			"description": "Export Segmentation Storage Object",
 			"type": "export",
 			"export_destinations": [
@@ -72,7 +73,7 @@
 				"input": [
 					{
 						"name": "export-dicom",
-						"value": "{{ context.executions.liver.artifacts.env_MONAI_OUTPUTPATH }}",
+						"value": "{{ context.executions.totalseg.artifacts.env_HOLOSCAN_OUTPUTPATH }}",
 						"mandatory": true
 					}
 				],
